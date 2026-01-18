@@ -11,8 +11,8 @@ cmake_minimum_required(VERSION 3.22.1)
 # build script scope).
 project("tensor")
 
-file(GLOB_RECURSE HEADERS *.h)
-file(GLOB_RECURSE SOURCES *.c)
+file(GLOB_RECURSE HEADERS include/*.h)
+file(GLOB_RECURSE SOURCES src/*.c)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -29,7 +29,6 @@ file(GLOB_RECURSE SOURCES *.c)
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
-        native-lib.cpp
         ${HEADERS}
         ${SOURCES})
 
@@ -41,3 +40,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         android
         log
         vulkan)
+
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC include)

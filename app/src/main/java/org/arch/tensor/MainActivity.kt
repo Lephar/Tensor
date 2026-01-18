@@ -15,7 +15,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Example of a call to a native method
-        binding.sampleText.text = initializeTensor()
+        //binding.sampleText.text = initializeTensor()
+
+        initializeTensor();
     }
 
     override fun onDestroy() {
@@ -28,7 +30,7 @@ class MainActivity : AppCompatActivity() {
      * A native method that is implemented by the 'tensor' native library,
      * which is packaged with this application.
      */
-    external fun initializeTensor(): String
+    external fun initializeTensor(): Unit
     external fun destroyTensor(): Unit
 
     companion object {
