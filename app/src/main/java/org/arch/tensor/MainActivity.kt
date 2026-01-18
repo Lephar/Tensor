@@ -1,5 +1,6 @@
 package org.arch.tensor
 
+import android.content.res.AssetManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import org.arch.tensor.databinding.ActivityMainBinding
@@ -14,10 +15,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Example of a call to a native method
-        //binding.sampleText.text = initializeTensor()
-
-        initializeTensor();
+        initializeTensor(assets);
     }
 
     override fun onDestroy() {
@@ -30,7 +28,7 @@ class MainActivity : AppCompatActivity() {
      * A native method that is implemented by the 'tensor' native library,
      * which is packaged with this application.
      */
-    external fun initializeTensor(): Unit
+    external fun initializeTensor(assets: AssetManager): Unit
     external fun destroyTensor(): Unit
 
     companion object {

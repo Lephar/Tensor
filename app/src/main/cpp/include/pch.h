@@ -39,9 +39,13 @@
 #define PATH_MAX 4096
 #endif
 
+#include <jni.h>
+
+#include <android/asset_manager_jni.h>
+#include <android/asset_manager.h>
+#include <android/log.h>
+
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_android.h>
-#include <android/log.h>
-#include <jni.h>
 
 #define TAG "Tensor"
