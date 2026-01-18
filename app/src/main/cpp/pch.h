@@ -1,0 +1,47 @@
+#pragma once
+
+#ifndef NDEBUG
+#define DEBUG 1
+#else
+#define DEBUG 0
+#endif
+
+#include <time.h>
+#include <math.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <string.h>
+#include <syslog.h>
+#include <limits.h>
+#include <assert.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <pthread.h>
+#include <sys/wait.h>
+#include <sys/mman.h>
+#include <semaphore.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netinet/ip.h>
+#include <netinet/tcp.h>
+#include <sys/sysinfo.h>
+
+#if __STDC_VERSION__ < 202311L
+#define nullptr NULL
+#else
+#include <stdbit.h> // TODO: Will be used later for stdc_count_ones
+#endif
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_android.h>
+#include <android/log.h>
+#include <jni.h>
+
+#define TAG "Tensor"
