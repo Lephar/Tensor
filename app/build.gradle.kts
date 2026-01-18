@@ -5,7 +5,9 @@ plugins {
 android {
     namespace = "org.arch.tensor"
     compileSdk {
-        version = release(36)
+        version = release(36) {
+            minorApiLevel = 1
+        }
     }
 
     defaultConfig {
@@ -21,6 +23,8 @@ android {
                 cppFlags += "-std=c++17"
             }
         }
+        shaders {
+        }
     }
 
     buildTypes {
@@ -33,8 +37,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     externalNativeBuild {
         cmake {
@@ -45,6 +49,8 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    ndkVersion = "29.0.14206865"
+    buildToolsVersion = "36.1.0"
 }
 
 dependencies {
