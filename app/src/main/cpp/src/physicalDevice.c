@@ -64,7 +64,7 @@ void setPhysicalDeviceDetails() {
     VkPhysicalDeviceFeatures2 physicalDeviceFeatures2 = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
         .pNext = nullptr,
-        .features = 0
+        .features = {}
     };
 
     vkGetPhysicalDeviceFeatures2(physicalDevice, &physicalDeviceFeatures2);
