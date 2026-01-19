@@ -31,7 +31,6 @@ void createBuffer(Buffer *buffer, VkBufferUsageFlags usage, VkDeviceSize size)
 
 void bindBufferMemory(Buffer *buffer, Memory *memory) {
     buffer->memory = memory;
-
     buffer->memoryOffset = alignMemory(memory, buffer->memoryRequirements);
 
     vkBindBufferMemory(device, buffer->buffer, memory->memory, buffer->memoryOffset);

@@ -53,7 +53,7 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags r
 }
 
 void *mapMemory(Memory *memory) {
-    assert(memory->memory != nullptr);
+    assert(memory->memory != VK_NULL_HANDLE);
     assert(memory->properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
     void *map;
