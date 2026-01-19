@@ -4,6 +4,7 @@
 #include "queue.h"
 #include "device.h"
 #include "shader.h"
+#include "pipeline.h"
 #include "memory.h"
 #include "buffer.h"
 
@@ -19,16 +20,18 @@ Java_org_arch_tensor_MainActivity_initializeTensor(JNIEnv* env, jobject activity
     getQueues();
 
     createShaderModules();
+    createComputePipeline();
 
     allocateMemories();
     createBuffers();
 }
 
 JNIEXPORT void JNICALL
-Java_org_arch_tensor_MainActivity_destroyTensor(JNIEnv* env, jobject jobj) {
+Java_org_arch_tensor_MainActivity_destroyTensor(JNIEnv* env, jobject activity) {
     destroyBuffers();
     freeMemories();
 
+    destroyComputePipeline();
     destroyShaderModules();
 
     clearQueues();
