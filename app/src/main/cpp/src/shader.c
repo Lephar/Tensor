@@ -5,7 +5,7 @@
 #include "logger.h"
 #include "asset.h"
 
-VkShaderModule computeShaderModule;
+VkShaderModule shaderModule;
 
 VkShaderModule createShaderModule(const char *filename) {
     uint32_t *data = nullptr;
@@ -19,25 +19,25 @@ VkShaderModule createShaderModule(const char *filename) {
         .pCode = data
     };
 
-    VkShaderModule shaderModule;
-    vkCreateShaderModule(device, &moduleInfo, nullptr, &shaderModule);
+    VkShaderModule module;
+    vkCreateShaderModule(device, &moduleInfo, nullptr, &module);
 
     debug("Shader module created successfully: %s", filename);
     free(data);
 
-    return shaderModule;
+    return module;
 }
 
 void createShaderModules() {
-    computeShaderModule = createShaderModule("shaders/tensor.comp.spv");
+    shaderModule = createShaderModule("shaders/tensor.comp.spv");
     debug("Shader modules created");
 }
 
-void destroyShaderModule(VkShaderModule shaderModule) {
-    vkDestroyShaderModule(device, shaderModule, nullptr);
+void destroyShaderModule(VkShaderModule module) {
+    vkDestroyShaderModule(device, module, nullptr);
 }
 
 void destroyShaderModules() {
-    destroyShaderModule(computeShaderModule);
+    destroyShaderModule(shaderModule);
     debug("Shader modules destroyed");
 }

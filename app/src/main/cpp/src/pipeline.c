@@ -6,10 +6,10 @@
 #include "logger.h"
 
 VkDescriptorSetLayout descriptorSetLayout;
-VkPipelineLayout computePipelineLayout;
-VkPipeline computePipeline;
+VkPipelineLayout pipelineLayout;
+VkPipeline pipeline;
 
-void createComputePipeline() {
+void createPipeline() {
     VkDescriptorSetLayoutBinding setLayoutBinding = {
         .binding = 0,
         .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
@@ -39,8 +39,8 @@ void createComputePipeline() {
         .pPushConstantRanges = nullptr
     };
 
-    vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &computePipelineLayout);
-    debug("Compute pipeline layout created");
+    vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout);
+    debug("Pipeline layout created");
 
     VkComputePipelineCreateInfo pipelineInfo = {
         .sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
@@ -51,26 +51,26 @@ void createComputePipeline() {
             .pNext = nullptr,
             .flags = 0,
             .stage = VK_SHADER_STAGE_COMPUTE_BIT,
-            .module = computeShaderModule,
+            .module = shaderModule,
             .pName = "main",
             .pSpecializationInfo = nullptr
         },
-        .layout = computePipelineLayout,
+        .layout = pipelineLayout,
         .basePipelineHandle = VK_NULL_HANDLE,
         .basePipelineIndex = -1
     };
 
-    vkCreateComputePipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &computePipeline);
-    debug("Compute pipeline created");
+    vkCreateComputePipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline);
+    debug("Pipeline created");
 }
 
-void destroyComputePipeline() {
+void destroyPipeline() {
     vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
     debug("Descriptor set layout destroyed");
 
-    vkDestroyPipelineLayout(device, computePipelineLayout, nullptr);
-    debug("Compute pipeline layout destroyed");
+    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+    debug("Pipeline layout destroyed");
 
-    vkDestroyPipeline(device, computePipeline, nullptr);
-    debug("Compute pipeline destroyed");
+    vkDestroyPipeline(device, pipeline, nullptr);
+    debug("Pipeline destroyed");
 }

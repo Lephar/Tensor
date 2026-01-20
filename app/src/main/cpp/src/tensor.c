@@ -20,7 +20,7 @@ Java_org_arch_tensor_MainActivity_initializeTensor(JNIEnv* env, jobject activity
     getQueues();
 
     createShaderModules();
-    createComputePipeline();
+    createPipeline();
 
     allocateMemories();
     createBuffers();
@@ -31,7 +31,7 @@ Java_org_arch_tensor_MainActivity_destroyTensor(JNIEnv* env, jobject activity) {
     destroyBuffers();
     freeMemories();
 
-    destroyComputePipeline();
+    destroyPipeline();
     destroyShaderModules();
 
     clearQueues();

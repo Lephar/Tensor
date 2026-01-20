@@ -3,8 +3,8 @@
 #include "pch.h"
 
 extern VkDescriptorSetLayout descriptorSetLayout;
-extern VkPipelineLayout computePipelineLayout;
-extern VkPipeline computePipeline;
+extern VkPipelineLayout pipelineLayout;
+extern VkPipeline pipeline;
 
-void createComputePipeline();
-void destroyComputePipeline();
+void createPipeline();
+void destroyPipeline();

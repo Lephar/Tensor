@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-extern VkShaderModule computeShaderModule;
+extern VkShaderModule shaderModule;
 
 void createShaderModules();
 void destroyShaderModules();
