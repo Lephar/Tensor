@@ -41,18 +41,13 @@ void selectPhysicalDevice() {
 
         vkGetPhysicalDeviceQueueFamilyProperties2(candidatePhysicalDevice, &queueFamilyCount, queueFamiliesProperties2);
 
-        uint32_t computeSupport = 0;
-
         for(uint32_t candidateQueueFamilyIndex = 0; candidateQueueFamilyIndex < queueFamilyCount; candidateQueueFamilyIndex++) {
             VkQueueFamilyProperties candidateQueueFamilyProperties = queueFamiliesProperties2[candidateQueueFamilyIndex].queueFamilyProperties;
 
             if(candidateQueueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT) {
-                computeSupport = 1;
-
+                physicalDevice = candidatePhysicalDevice;
                 queueFamilyIndex = candidateQueueFamilyIndex;
                 queueFamilyProperties = candidateQueueFamilyProperties;
-
-                physicalDevice = candidatePhysicalDevice;
 
                 VkPhysicalDeviceProperties2 physicalDeviceProperties2 = {
                         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
@@ -81,7 +76,9 @@ void selectPhysicalDevice() {
                 vkGetPhysicalDeviceMemoryProperties2(physicalDevice, &memoryProperties2);
                 memoryProperties = memoryProperties2.memoryProperties;
 
-                debug("Physical device selected: %s", physicalDeviceProperties.deviceName);
+                debug("Physical device selected:");
+                debug("\tName: %s", physicalDeviceProperties.deviceName);
+                debug("\tQueue family index: %u", queueFamilyIndex);
 
                 return;
             }
