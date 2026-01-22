@@ -2,7 +2,7 @@
 
 #include "device.h"
 
-#include "logger.h"
+#include "helper.h"
 
 Memory bufferMemory;
 void *mappedMemory;

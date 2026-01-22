@@ -2,8 +2,7 @@
 
 #include "device.h"
 
-#include "asset.h"
-#include "logger.h"
+#include "helper.h"
 
 VkDescriptorSetLayout descriptorSetLayout;
 VkPipelineLayout pipelineLayout;

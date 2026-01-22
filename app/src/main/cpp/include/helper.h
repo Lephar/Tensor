@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch.h"
+#include "tensor.h"
 
 #define  SEC_TO_MSEC      1000.0f
 #define MSEC_TO_USEC  SEC_TO_MSEC
@@ -8,11 +8,13 @@
 
 #define EPSILON 0.000000000931322574615478515625f // 2 ^ -30
 
-int32_t compareFloat(float first, float second);
-float radians(float degrees);
+void debug(const char *fmt, ...);
 
 uint64_t align(uint64_t value, uint64_t alignment);
 uint64_t alignBack(uint64_t value, uint64_t alignment);
+
+float radians(float degrees);
+int32_t compareFloat(float first, float second);
 
 int8_t bmin(int8_t first, int8_t second);
 int8_t bmax(int8_t first, int8_t second);
@@ -37,3 +39,6 @@ int64_t lmax(int64_t first, int64_t second);
 
 uint64_t ulmin(uint64_t first, uint64_t second);
 uint64_t ulmax(uint64_t first, uint64_t second);
+
+void initializeAssetManager(JNIEnv* env, jobject assets);
+size_t loadAsset(const char *filename, void **outData);
