@@ -16,11 +16,12 @@ extern VkDevice device;
 
 extern VkQueue queue;
 extern VkCommandPool commandPool;
+extern VkCommandBuffer commandBuffer;
 
 void selectPhysicalDevice();
 void *loadDeviceFunction(const char *name);
 void createDevice();
 VkCommandBuffer allocateSingleCommandBuffer();
-void beginSingleCommand(VkCommandBuffer commandBuffer);
-void endSingleCommand(VkCommandBuffer commandBuffer);
+void beginSingleCommand(VkCommandBuffer commandBufferHandle);
+void endSingleCommand(VkCommandBuffer commandBufferHandle);
 void destroyDevice();

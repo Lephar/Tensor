@@ -18,6 +18,7 @@ VkDevice device;
 
 VkQueue queue;
 VkCommandPool commandPool;
+VkCommandBuffer commandBuffer;
 
 PFN_vkGetDeviceProcAddr deviceFunctionLoader;
 
@@ -159,6 +160,8 @@ void createDevice() {
 
     vkCreateCommandPool(device, &commandPoolInfo, nullptr, &commandPool);
     debug("Command pool created");
+
+    commandBuffer = allocateSingleCommandBuffer();
 }
 
 VkCommandBuffer allocateSingleCommandBuffer() {
@@ -170,12 +173,12 @@ VkCommandBuffer allocateSingleCommandBuffer() {
             .commandBufferCount = 1
     };
 
-    VkCommandBuffer commandBuffer;
-    vkAllocateCommandBuffers(device, &commandBufferInfo, &commandBuffer);
-    return commandBuffer;
+    VkCommandBuffer commandBufferHandle;
+    vkAllocateCommandBuffers(device, &commandBufferInfo, &commandBufferHandle);
+    return commandBufferHandle;
 }
 
-void beginSingleCommand(VkCommandBuffer commandBuffer) {
+void beginSingleCommand(VkCommandBuffer commandBufferHandle) {
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .pNext = nullptr,
@@ -183,11 +186,11 @@ void beginSingleCommand(VkCommandBuffer commandBuffer) {
         .pInheritanceInfo = nullptr
     };
 
-    vkBeginCommandBuffer(commandBuffer, &beginInfo);
+    vkBeginCommandBuffer(commandBufferHandle, &beginInfo);
 }
 
-void endSingleCommand(VkCommandBuffer commandBuffer) {
-    vkEndCommandBuffer(commandBuffer);
+void endSingleCommand(VkCommandBuffer commandBufferHandle) {
+    vkEndCommandBuffer(commandBufferHandle);
 
     VkSubmitInfo submitInfo = {
             .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -196,14 +199,14 @@ void endSingleCommand(VkCommandBuffer commandBuffer) {
             .pWaitSemaphores = nullptr,
             .pWaitDstStageMask = nullptr,
             .commandBufferCount = 1,
-            .pCommandBuffers = &commandBuffer,
+            .pCommandBuffers = &commandBufferHandle,
             .signalSemaphoreCount = 0,
             .pSignalSemaphores = nullptr
     };
 
     vkQueueSubmit(queue, 1, &submitInfo, 0);
     vkQueueWaitIdle(queue);
-    vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+    vkFreeCommandBuffers(device, commandPool, 1, &commandBufferHandle);
 }
 
 void destroyDevice() {
