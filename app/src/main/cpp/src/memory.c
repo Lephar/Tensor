@@ -1,13 +1,13 @@
 #include "memory.h"
 
 #include "device.h"
-#include "buffer.h"
 
-#include "numerics.h"
 #include "logger.h"
 
 Memory bufferMemory;
 void *mappedMemory;
+
+Buffer storageBuffer;
 
 VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements) {
     VkDeviceSize bindOffset = align(memory->offset, memoryRequirements.alignment);
@@ -15,6 +15,51 @@ VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements
     memory->offset = bindOffset + memoryRequirements.size;
 
     return bindOffset;
+}
+
+void createBuffer(Buffer *buffer, VkBufferUsageFlags usage, VkDeviceSize size)
+{
+    buffer->usage = usage;
+    buffer->size = size;
+
+    VkBufferCreateInfo bufferInfo = {
+            .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .size = size,
+            .usage = usage,
+            .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+            .queueFamilyIndexCount = 0,
+            .pQueueFamilyIndices = nullptr
+    };
+
+    vkCreateBuffer(device, &bufferInfo, nullptr, &buffer->buffer);
+    vkGetBufferMemoryRequirements(device, buffer->buffer, &buffer->memoryRequirements);
+}
+
+void bindBufferMemory(Buffer *buffer, Memory *memory) {
+    buffer->memory = memory;
+    buffer->memoryOffset = alignMemory(memory, buffer->memoryRequirements);
+
+    vkBindBufferMemory(device, buffer->buffer, memory->memory, buffer->memoryOffset);
+}
+
+void createBuffers() {
+    createBuffer(&storageBuffer, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, bufferMemory.size);
+    debug("Storage buffer created: %ld bytes", storageBuffer.size);
+
+    bindBufferMemory(&storageBuffer, &bufferMemory);
+    debug("Storage buffer bound to buffer memory");
+}
+
+void destroyBuffer(Buffer *buffer) {
+    vkDestroyBuffer(device, buffer->buffer, nullptr);
+    buffer->memory = nullptr;
+}
+
+void destroyBuffers() {
+    destroyBuffer(&storageBuffer);
+    debug("Storage buffer destroyed");
 }
 
 void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size) {

@@ -10,12 +10,22 @@ typedef struct memory {
     VkDeviceMemory memory;
 } Memory, *PMemory;
 
+typedef struct buffer {
+    VkBufferUsageFlags usage;
+    VkDeviceSize size;
+    VkBuffer buffer;
+    VkMemoryRequirements memoryRequirements;
+    VkDeviceSize memoryOffset;
+    Memory *memory;
+} Buffer, *PBuffer;
+
 extern Memory bufferMemory;
 extern void *mappedMemory;
 
-void allocateMemories();
-void freeMemories();
+extern Buffer storageBuffer;
 
-VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements);
-void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size);
-void freeMemory(Memory *memory);
+void allocateMemories();
+void createBuffers();
+
+void destroyBuffers();
+void freeMemories();
