@@ -1,13 +1,21 @@
 package org.arch.tensor
 
+import android.os.Bundle
 import android.content.res.AssetManager
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import org.arch.tensor.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    external fun initializeTensor(assets: AssetManager): Unit
+    external fun destroyTensor(): Unit
 
     private lateinit var binding: ActivityMainBinding
+
+    companion object {
+        init {
+            System.loadLibrary("tensor")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,19 +30,5 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
 
         destroyTensor();
-    }
-
-    /**
-     * A native method that is implemented by the 'tensor' native library,
-     * which is packaged with this application.
-     */
-    external fun initializeTensor(assets: AssetManager): Unit
-    external fun destroyTensor(): Unit
-
-    companion object {
-        // Used to load the 'tensor' library on application startup.
-        init {
-            System.loadLibrary("tensor")
-        }
     }
 }
