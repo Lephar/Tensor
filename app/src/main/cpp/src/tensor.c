@@ -1,7 +1,5 @@
 #include "asset.h"
 #include "instance.h"
-#include "physicalDevice.h"
-#include "queue.h"
 #include "device.h"
 #include "shader.h"
 #include "pipeline.h"
@@ -14,10 +12,7 @@ Java_org_arch_tensor_MainActivity_initializeTensor(JNIEnv* env, jobject activity
 
     createInstance();
     selectPhysicalDevice();
-    setPhysicalDeviceDetails();
-    generateQueueDetails();
     createDevice();
-    getQueues();
 
     createShaderModules();
     createPipeline();
@@ -34,7 +29,6 @@ Java_org_arch_tensor_MainActivity_destroyTensor(JNIEnv* env, jobject activity) {
     destroyPipeline();
     destroyShaderModules();
 
-    clearQueues();
     destroyDevice();
     destroyInstance();
 }

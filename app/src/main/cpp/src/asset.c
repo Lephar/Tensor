@@ -1,7 +1,5 @@
 #include "asset.h"
 
-#include "logger.h"
-
 AAssetManager *assetManager;
 
 void initializeAssetManager(JNIEnv* env, jobject assets) {

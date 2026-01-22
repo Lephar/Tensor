@@ -19,26 +19,14 @@
 
 // END OF NOTICE
 
-float radians(float degrees) {
-    return M_PI * degrees / 180.0f;
-}
-
 int32_t compareFloat(float first, float second) {
     float difference = first - second;
 
     return (difference > EPSILON) - (difference < -EPSILON);
 }
 
-// TODO: Change to stdc_count_ones when ready
-uint32_t popcount(uint32_t value) {
-    uint32_t count = 0;
-
-    while(value) {
-        count += (value & 1);
-        value >>= 1;
-    }
-
-    return count;
+float radians(float degrees) {
+    return M_PI * degrees / 180.0f;
 }
 
 uint64_t align(uint64_t value, uint64_t alignment) {
