@@ -1,10 +1,8 @@
 #include "asset.h"
 #include "instance.h"
 #include "device.h"
-#include "shader.h"
 #include "pipeline.h"
 #include "memory.h"
-#include "buffer.h"
 
 JNIEXPORT void JNICALL
 Java_org_arch_tensor_MainActivity_initializeTensor(JNIEnv* env, jobject activity, jobject assets) {
@@ -14,6 +12,7 @@ Java_org_arch_tensor_MainActivity_initializeTensor(JNIEnv* env, jobject activity
     selectPhysicalDevice();
     createDevice();
 
+    createPipelineLayout();
     createShaderModules();
     createPipeline();
 
@@ -28,6 +27,7 @@ Java_org_arch_tensor_MainActivity_destroyTensor(JNIEnv* env, jobject activity) {
 
     destroyPipeline();
     destroyShaderModules();
+    destroyPipelineLayout();
 
     destroyDevice();
     destroyInstance();
