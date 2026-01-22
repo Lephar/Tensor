@@ -209,9 +209,9 @@ void endSingleCommand(VkCommandBuffer commandBuffer) {
 void destroyDevice() {
     vkQueueWaitIdle(queue);
     vkDestroyCommandPool(device, commandPool, nullptr);
+    debug("Command pool destroyed");
 
     vkDeviceWaitIdle(device);
     vkDestroyDevice(device, nullptr);
-
     debug("Device destroyed");
 }

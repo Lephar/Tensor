@@ -98,6 +98,8 @@ void freeMemory(Memory *memory) {
 
 void freeMemories() {
     unmapMemory(&bufferMemory);
+    debug("Buffer memory unmapped");
+
     freeMemory(&bufferMemory);
-    debug("Compute memory freed");
+    debug("Buffer memory freed");
 }

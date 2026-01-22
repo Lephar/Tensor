@@ -21,8 +21,6 @@ VkShaderModule createShaderModule(const char *filename) {
 
     VkShaderModule module;
     vkCreateShaderModule(device, &moduleInfo, nullptr, &module);
-
-    debug("Shader module created successfully: %s", filename);
     free(data);
 
     return module;

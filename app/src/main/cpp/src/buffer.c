@@ -36,13 +36,14 @@ void bindBufferMemory(Buffer *buffer, Memory *memory) {
 
 void createBuffers() {
     createBuffer(&storageBuffer, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, bufferMemory.size);
-    bindBufferMemory(&storageBuffer, &bufferMemory);
     debug("Storage buffer created: %ld bytes", storageBuffer.size);
+
+    bindBufferMemory(&storageBuffer, &bufferMemory);
+    debug("Storage buffer bound to buffer memory");
 }
 
 void destroyBuffer(Buffer *buffer) {
     vkDestroyBuffer(device, buffer->buffer, nullptr);
-
     buffer->memory = nullptr;
 }
 
