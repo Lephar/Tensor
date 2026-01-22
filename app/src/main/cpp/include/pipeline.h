@@ -2,16 +2,19 @@
 
 #include "tensor.h"
 
-extern VkDescriptorSetLayout descriptorSetLayout;
-extern VkPipelineLayout pipelineLayout;
-
 extern VkShaderModule shaderModule;
+
+extern VkDescriptorSetLayout descriptorSetLayout;
+extern VkDescriptorPool descriptorPool;
+extern VkDescriptorSet descriptorSet;
+
+extern VkPipelineLayout pipelineLayout;
 extern VkPipeline pipeline;
 
-void createPipelineLayout();
 void createShaderModules();
+void createDescriptorSet();
 void createPipeline();
 
-void destroyPipelineLayout();
 void destroyShaderModules();
+void destroyDescriptorSet();
 void destroyPipeline();

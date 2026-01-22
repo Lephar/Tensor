@@ -1,13 +1,17 @@
 #include "pipeline.h"
 
 #include "device.h"
+#include "memory.h"
 
 #include "helper.h"
 
-VkDescriptorSetLayout descriptorSetLayout;
-VkPipelineLayout pipelineLayout;
-
 VkShaderModule shaderModule;
+
+VkDescriptorSetLayout descriptorSetLayout;
+VkDescriptorPool descriptorPool;
+VkDescriptorSet descriptorSet;
+
+VkPipelineLayout pipelineLayout;
 VkPipeline pipeline;
 
 VkShaderModule createShaderModule(const char *filename) {
@@ -15,11 +19,11 @@ VkShaderModule createShaderModule(const char *filename) {
     size_t size = loadAsset(filename, (void **) &data);
 
     VkShaderModuleCreateInfo moduleInfo = {
-            .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .codeSize = size,
-            .pCode = data
+        .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .codeSize = size,
+        .pCode = data
     };
 
     VkShaderModule module;
@@ -34,41 +38,91 @@ void createShaderModules() {
     debug("Shader modules created");
 }
 
-void createPipelineLayout() {
+void createDescriptorSet() {
     VkDescriptorSetLayoutBinding setLayoutBinding = {
-            .binding = 0,
-            .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-            .descriptorCount = 1,
-            .stageFlags = VK_SHADER_STAGE_COMPUTE_BIT,
-            .pImmutableSamplers = nullptr
+        .binding = 0,
+        .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+        .descriptorCount = 1,
+        .stageFlags = VK_SHADER_STAGE_COMPUTE_BIT,
+        .pImmutableSamplers = nullptr
     };
 
     VkDescriptorSetLayoutCreateInfo setLayoutInfo = {
-            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .bindingCount = 1,
-            .pBindings = &setLayoutBinding
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .bindingCount = 1,
+        .pBindings = &setLayoutBinding
     };
 
     vkCreateDescriptorSetLayout(device, &setLayoutInfo, nullptr, &descriptorSetLayout);
     debug("Descriptor set layout created");
 
+    VkDescriptorPoolSize poolSize = {
+        .type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+        .descriptorCount = 1
+    };
+
+    VkDescriptorPoolCreateInfo poolInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .maxSets = 1,
+        .poolSizeCount = 1,
+        .pPoolSizes = &poolSize
+    };
+
+    vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool);
+    debug("Descriptor pool created");
+
+    VkDescriptorSetAllocateInfo allocateInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        .pNext = nullptr,
+        .descriptorPool = descriptorPool,
+        .descriptorSetCount = 1,
+        .pSetLayouts = &descriptorSetLayout
+    };
+
+    vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet);
+    debug("Descriptor set allocated");
+
+    VkDescriptorBufferInfo bufferInfo = {
+        .buffer = storageBuffer.buffer,
+        .offset = 0,
+        .range  = VK_WHOLE_SIZE
+    };
+
+    VkWriteDescriptorSet descriptorWrite = {
+        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .pNext = nullptr,
+        .dstSet = descriptorSet,
+        .dstBinding = 0,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+        .pImageInfo = nullptr,
+        .pBufferInfo = &bufferInfo,
+        .pTexelBufferView = nullptr
+    };
+
+    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+    debug("Descriptor set updated");
+}
+
+void createPipeline() {
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .setLayoutCount = 1,
-            .pSetLayouts = &descriptorSetLayout,
-            .pushConstantRangeCount = 0,
-            .pPushConstantRanges = nullptr
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .setLayoutCount = 1,
+        .pSetLayouts = &descriptorSetLayout,
+        .pushConstantRangeCount = 0,
+        .pPushConstantRanges = nullptr
     };
 
     vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout);
     debug("Pipeline layout created");
-}
 
-void createPipeline() {
     VkComputePipelineCreateInfo pipelineInfo = {
         .sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
         .pNext = nullptr,
@@ -100,15 +154,18 @@ void destroyShaderModules() {
     debug("Shader modules destroyed");
 }
 
-void destroyPipelineLayout() {
+void destroyDescriptorSet() {
+    vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+    debug("Descriptor pool destroyed");
+
     vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
     debug("Descriptor set layout destroyed");
-
-    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-    debug("Pipeline layout destroyed");
 }
 
 void destroyPipeline() {
     vkDestroyPipeline(device, pipeline, nullptr);
     debug("Pipeline destroyed");
+
+    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+    debug("Pipeline layout destroyed");
 }

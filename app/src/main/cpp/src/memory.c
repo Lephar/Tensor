@@ -119,7 +119,7 @@ void allocateMemories() {
     // TODO: Syntax highlighting fails for %b but it compiles, contribute to clangd maybe?
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
-    allocateMemory(&bufferMemory, typeFilter, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, 1L << 30L);
+    allocateMemory(&bufferMemory, typeFilter, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, physicalDeviceProperties.limits.maxStorageBufferRange);
 
     debug("\tSelected type index:\t%u", bufferMemory.typeIndex);
     debug("\t%ld bytes allocated", bufferMemory.size);
