@@ -18,7 +18,7 @@ void recordCommands() {
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
-    vkCmdDispatch(commandBuffer, 4, 8, 16);
+    vkCmdDispatch(commandBuffer, 2, 1, 1);
 
     vkEndCommandBuffer(commandBuffer);
 
@@ -53,4 +53,8 @@ void waitDispatch() {
     debug("Dispatch finished");
 
     flushMemory(&bufferMemory);
+    debug("Values:");
+    for(int index = 0; index < 256; index++) {
+        debug("%u", ((uint32_t *)mappedMemory)[index]);
+    }
 }

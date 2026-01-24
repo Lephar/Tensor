@@ -1,3 +1,32 @@
 #version 460 core
 
-void main() {}
+layout (local_size_z = 2) in;
+layout (local_size_y = 4) in;
+layout (local_size_x = 8) in;
+
+layout (binding = 0) buffer Storage {
+    uint values[];
+};
+
+/*
+in    uvec3 gl_NumWorkGroups;
+in    uvec3 gl_WorkGroupID;
+in    uvec3 gl_LocalInvocationID;
+in    uvec3 gl_GlobalInvocationID;
+in    uint  gl_LocalInvocationIndex;
+const uvec3 gl_WorkGroupSize;
+*/
+
+void main() {
+    uint workGroupIndex = gl_WorkGroupID.z * gl_NumWorkGroups.y * gl_NumWorkGroups.x + gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
+    uint workGroupOffset = gl_WorkGroupSize.z * gl_WorkGroupSize.y * gl_WorkGroupSize.x * workGroupIndex;
+
+    uint invocationIndex = gl_LocalInvocationID.z * gl_WorkGroupSize.y * gl_WorkGroupSize.x + gl_LocalInvocationID.y * gl_WorkGroupSize.x + gl_LocalInvocationID.x;
+    uint index = workGroupOffset + invocationIndex;
+
+    if(index == gl_LocalInvocationIndex) {
+        values[index] = index;
+    } else {
+        values[index] = index * index;
+    }
+}
