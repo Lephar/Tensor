@@ -107,19 +107,17 @@ void *mapMemory(Memory *memory) {
 
 void allocateMemories() {
     Buffer temporaryBuffer;
-    createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 1L << 20L);
+    createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, physicalDeviceProperties.limits.maxStorageBufferRange);
 
     VkMemoryRequirements bufferMemoryRequirements;
     vkGetBufferMemoryRequirements(device, temporaryBuffer.buffer, &bufferMemoryRequirements);
-
-    uint32_t typeFilter = bufferMemoryRequirements.memoryTypeBits;
     destroyBuffer(&temporaryBuffer);
 
     debug("Buffer memory:");
     // TODO: Syntax highlighting fails for %b but it compiles, contribute to clangd maybe?
-    debug("\tSuitable type indices:\t%08b", typeFilter);
+    debug("\tSuitable type indices:\t%08b", bufferMemoryRequirements.memoryTypeBits);
 
-    allocateMemory(&bufferMemory, typeFilter, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, physicalDeviceProperties.limits.maxStorageBufferRange);
+    allocateMemory(&bufferMemory, bufferMemoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, bufferMemoryRequirements.size);
 
     debug("\tSelected type index:\t%u", bufferMemory.typeIndex);
     debug("\t%ld bytes allocated", bufferMemory.size);
