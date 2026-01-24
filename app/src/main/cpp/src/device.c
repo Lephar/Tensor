@@ -16,11 +16,12 @@ VkPhysicalDeviceMemoryProperties memoryProperties;
 
 VkDevice device;
 
+PFN_vkGetDeviceProcAddr deviceFunctionLoader;
+
 VkQueue queue;
 VkCommandPool commandPool;
 VkCommandBuffer commandBuffer;
-
-PFN_vkGetDeviceProcAddr deviceFunctionLoader;
+VkFence fence;
 
 void selectPhysicalDevice() {
     uint32_t physicalDeviceCount = 0;
@@ -162,6 +163,16 @@ void createDevice() {
     debug("Command pool created");
 
     commandBuffer = allocateSingleCommandBuffer();
+    debug("Command buffer allocated");
+
+    VkFenceCreateInfo fenceInfo = {
+            .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0
+    };
+
+    vkCreateFence(device, &fenceInfo, nullptr, &fence);
+    debug("Fence created");
 }
 
 VkCommandBuffer allocateSingleCommandBuffer() {
@@ -211,10 +222,15 @@ void endSingleCommand(VkCommandBuffer commandBufferHandle) {
 
 void destroyDevice() {
     vkQueueWaitIdle(queue);
+
+    vkDestroyFence(device, fence, nullptr);
+    debug("Fence destroyed");
+
     vkDestroyCommandPool(device, commandPool, nullptr);
     debug("Command pool destroyed");
 
     vkDeviceWaitIdle(device);
+
     vkDestroyDevice(device, nullptr);
     debug("Device destroyed");
 }

@@ -17,6 +17,7 @@ extern VkDevice device;
 extern VkQueue queue;
 extern VkCommandPool commandPool;
 extern VkCommandBuffer commandBuffer;
+extern VkFence fence;
 
 void selectPhysicalDevice();
 void *loadDeviceFunction(const char *name);
