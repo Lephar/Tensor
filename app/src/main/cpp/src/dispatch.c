@@ -58,12 +58,13 @@ void dispatch() {
             .pSignalSemaphores = nullptr,
     };
 
-    vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
-
+    vkQueueSubmit(queue, 1, &submitInfo, fence);
     debug("Commands dispatched");
 }
 
 void waitDispatch() {
+    vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+    vkResetFences(device, 1, &fence);
     debug("Dispatch finished");
 
     flushMemory();
