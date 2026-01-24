@@ -22,10 +22,15 @@ Java_org_arch_tensor_MainActivity_initializeTensor(JNIEnv* env, jobject activity
 }
 
 JNIEXPORT void JNICALL
-Java_org_arch_tensor_MainActivity_runTensor(JNIEnv* env, jobject activity) {
+Java_org_arch_tensor_MainActivity_runTensor(JNIEnv* env, jobject activity, jstring string) {
+    const char *message = (*env)->GetStringUTFChars(env, string, nullptr);
+    debug("Message: %s", message);
+
     recordCommands();
     dispatch();
     waitDispatch();
+
+    (*env)->ReleaseStringUTFChars(env, string, message);
 }
 
 JNIEXPORT void JNICALL

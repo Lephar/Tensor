@@ -7,7 +7,7 @@ import org.arch.tensor.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     external fun initializeTensor(assets: AssetManager): Unit
-    external fun runTensor(): Unit
+    external fun runTensor(string: String): Unit
     external fun destroyTensor(): Unit
 
     private lateinit var binding: ActivityMainBinding
@@ -26,12 +26,13 @@ class MainActivity : AppCompatActivity() {
 
         initializeTensor(assets);
 
-        binding.text.text = "Initialized"
         binding.button.setOnClickListener {
             binding.button.isEnabled = false
-            runTensor()
+            runTensor(binding.text.text.toString())
             binding.button.isEnabled = true
         }
+
+        binding.text.isEnabled = true
         binding.button.isEnabled = true
     }
 
