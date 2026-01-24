@@ -126,6 +126,21 @@ void allocateMemories() {
     debug("\tSuccessfully mapped");
 }
 
+void flushMemory(Memory *memory) {
+    if(!(memory->properties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+        VkMappedMemoryRange memoryRange = {
+                .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
+                .pNext = nullptr,
+                .memory = memory->memory,
+                .offset = 0,
+                .size = memory->size,
+        };
+
+        vkFlushMappedMemoryRanges(device, 1, &memoryRange);
+        debug("Memory flushed");
+    }
+}
+
 void unmapMemory(Memory *memory) {
     vkUnmapMemory(device, memory->memory);
 }

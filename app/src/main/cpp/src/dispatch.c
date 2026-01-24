@@ -6,21 +6,6 @@
 
 #include "helper.h"
 
-void flushMemory() {
-    if(!(bufferMemory.properties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
-        VkMappedMemoryRange memoryRange = {
-                .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-                .pNext = nullptr,
-                .memory = bufferMemory.memory,
-                .offset = 0,
-                .size = bufferMemory.size,
-        };
-
-        vkFlushMappedMemoryRanges(device, 1, &memoryRange);
-        debug("Memory flushed");
-    }
-}
-
 void recordCommands() {
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -42,7 +27,7 @@ void recordCommands() {
 
 void dispatch() {
     memset(mappedMemory, 0, bufferMemory.size);
-    flushMemory();
+    flushMemory(&bufferMemory);
 
     VkPipelineStageFlags waitStage = 0;
 
@@ -67,5 +52,5 @@ void waitDispatch() {
     vkResetFences(device, 1, &fence);
     debug("Dispatch finished");
 
-    flushMemory();
+    flushMemory(&bufferMemory);
 }

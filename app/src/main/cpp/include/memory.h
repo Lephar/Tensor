@@ -27,5 +27,7 @@ extern Buffer storageBuffer;
 void allocateMemories();
 void createBuffers();
 
+void flushMemory(Memory *memory);
+
 void destroyBuffers();
 void freeMemories();
