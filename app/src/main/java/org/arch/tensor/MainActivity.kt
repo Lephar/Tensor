@@ -2,6 +2,7 @@ package org.arch.tensor
 
 import android.os.Bundle
 import android.content.res.AssetManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import org.arch.tensor.databinding.ActivityMainBinding
 
@@ -28,7 +29,16 @@ class MainActivity : AppCompatActivity() {
 
         binding.button.setOnClickListener {
             binding.button.isEnabled = false
-            runTensor(binding.text.text.toString())
+
+            val message = binding.text.text.toString()
+            binding.text.text.clear()
+
+            val text = TextView(this)
+            text.text = message
+            binding.linear.addView(text)
+
+            runTensor(message)
+
             binding.button.isEnabled = true
         }
 
