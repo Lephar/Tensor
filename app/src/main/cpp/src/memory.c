@@ -66,7 +66,6 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags r
     memory->properties = requiredProperties;
     memory->typeIndex = UINT32_MAX;
     memory->offset = 0;
-    memory->size = size;
 
     for(uint32_t memoryIndex = 0; memoryIndex < memoryProperties.memoryTypeCount; memoryIndex++) {
         if((typeFilter & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & requiredProperties) == requiredProperties) {
@@ -76,24 +75,25 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags r
     }
 
     assert(memory->typeIndex < memoryProperties.memoryTypeCount);
+    memory->size = ulmin(size, 3 * memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size / 4);
 
-    /* TODO: Why doesn't this work?
-    if(memory->size > memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size) {
-        memory->size = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size;
-    } */
+    while(true) {
+        VkMemoryAllocateInfo memoryInfo = {
+                .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+                .pNext = nullptr,
+                .allocationSize = memory->size,
+                .memoryTypeIndex = memory->typeIndex
+        };
 
-    while(memory->size > memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size) {
-        memory->size /= 2;
-    } // TODO: Take used memory into account
+        VkResult result = vkAllocateMemory(device, &memoryInfo, nullptr, &memory->memory);
+        assert(result == VK_SUCCESS || result == VK_ERROR_OUT_OF_HOST_MEMORY || result == VK_ERROR_OUT_OF_DEVICE_MEMORY);
 
-    VkMemoryAllocateInfo memoryInfo = {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-        .pNext = nullptr,
-        .allocationSize = memory->size,
-        .memoryTypeIndex = memory->typeIndex
-    };
-
-    vkAllocateMemory(device, &memoryInfo, nullptr, &memory->memory);
+        if(result == VK_SUCCESS) {
+            break;
+        } else { // result == VK_ERROR_OUT_OF_HOST_MEMORY || result == VK_ERROR_OUT_OF_DEVICE_MEMORY
+            memory->size = 3 * memory->size / 4;
+        }
+    }
 }
 
 void *mapMemory(Memory *memory) {
@@ -115,14 +115,16 @@ void allocateMemories() {
 
     debug("Buffer memory:");
     // TODO: Syntax highlighting fails for %b but it compiles, contribute to clangd maybe?
-    debug("\tSuitable type indices:\t%08b", bufferMemoryRequirements.memoryTypeBits);
+    debug("\tSuitable type indices: %08b", bufferMemoryRequirements.memoryTypeBits);
+    debug("\tTrying to allocate %lu bytes", bufferMemoryRequirements.size);
 
     allocateMemory(&bufferMemory, bufferMemoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, bufferMemoryRequirements.size);
 
-    debug("\tSelected type index:\t%u", bufferMemory.typeIndex);
-    debug("\t%ld bytes allocated", bufferMemory.size);
+    debug("\tSelected type index: %u", bufferMemory.typeIndex);
+    debug("\tAllocated %lu bytes", bufferMemory.size);
 
     mappedMemory = mapMemory(&bufferMemory);
+    assert(mappedMemory != nullptr);
     debug("\tSuccessfully mapped");
 }
 
