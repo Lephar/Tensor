@@ -90,9 +90,10 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags r
 
         if(result == VK_SUCCESS) {
             break;
-        } else { // result == VK_ERROR_OUT_OF_HOST_MEMORY || result == VK_ERROR_OUT_OF_DEVICE_MEMORY
-            memory->size = 3 * memory->size / 4;
         }
+
+        // result == VK_ERROR_OUT_OF_HOST_MEMORY || result == VK_ERROR_OUT_OF_DEVICE_MEMORY
+        memory->size = 3 * memory->size / 4;
     }
 }
 
